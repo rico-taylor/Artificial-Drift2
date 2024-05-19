@@ -22,10 +22,17 @@ backward = False
 aclockwise = False
 clockwise = False
 
+drift = False
+backDict = {}
+
 velocity = 0
-max_velocity = 15
-friction = 0.05
+max_velocity = 8
+friction = 0.07
+acceleration = 0.1
 rotation_speed = 4
+
+drift_time = 8
+rounds = 0
 
 @window.event
 def on_draw():
@@ -39,6 +46,8 @@ def on_key_press(symbol, modifiers):
   global backward
   global clockwise
   global aclockwise
+  global drift
+  global rounds
 
   if symbol == key.UP:
     forward = True
@@ -50,13 +59,18 @@ def on_key_press(symbol, modifiers):
   if symbol == key.RIGHT:
     clockwise = True
 
+  if symbol == key.LSHIFT or symbol == key.RSHIFT:
+    drift = True
+    rounds = 0
+
 @window.event
 def on_key_release(symbol, modifiers):
   global forward
   global backward
   global clockwise
   global aclockwise
-  
+  global drift
+
   if symbol == key.UP:
     forward = False
   if symbol == key.DOWN:
@@ -65,30 +79,47 @@ def on_key_release(symbol, modifiers):
     aclockwise = False
   if symbol == key.RIGHT:
     clockwise = False
+  if symbol == key.LSHIFT or symbol == key.RSHIFT:
+    drift = False
 
 def update(dt):
   global velocity
+  global rounds
   if velocity > 0:
     velocity -= friction
   if velocity < 0:
     velocity += friction
-  if velocity < friction and velocity > -friction:
-    velocity = 0
   if velocity > max_velocity:
     velocity = max_velocity
   if velocity < -max_velocity:
     velocity = -max_velocity
-  
-  car.y += velocity * cos(radians(car.rotation))
-  car.x += velocity * sin(radians(car.rotation))
-
 
   if forward == True:
-    velocity += 0.1
+    velocity += acceleration
   if backward == True:
-    velocity -= 0.1
+    velocity -= acceleration
+
+  dy = velocity * cos(radians(car.rotation))
+  dx = velocity * sin(radians(car.rotation))
   
-  if velocity != 0:
+  new = {dy:dx}
+  backDict.update(new)
+  if len(backDict) > drift_time:
+    backDict.pop(list(backDict)[0])
+  
+  rounds += 1
+  if drift == True:
+    if rounds >= drift_time:
+      car.y += list(backDict)[0]
+      car.x += backDict[list(backDict)[1]]
+    else:
+      car.y += dy
+      car.x += dx
+  else:
+    car.y += dy
+    car.x += dx
+  
+  if forward == True or backward == True or velocity > friction or velocity < -friction:
     if aclockwise == True:
       car.rotation -= rotation_speed
     if clockwise == True:
