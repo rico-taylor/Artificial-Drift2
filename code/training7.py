@@ -71,10 +71,12 @@ def update(dt):
   if backward == True:
     car.y -= drive_speed * cos(radians(car.rotation))
     car.x -= drive_speed * sin(radians(car.rotation))
-  if aclockwise == True:
-    car.rotation -= rotation_speed
-  if clockwise == True:
-    car.rotation += rotation_speed
+  
+  if forward == True or backward == True: ##should be changed to if drive_speed > 0 once acceleration is added.
+    if aclockwise == True:
+      car.rotation -= rotation_speed
+    if clockwise == True:
+      car.rotation += rotation_speed
 
 pyglet.clock.schedule_interval(update, 1/60)
 pyglet.app.run()
