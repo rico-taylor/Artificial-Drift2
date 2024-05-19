@@ -22,7 +22,9 @@ backward = False
 aclockwise = False
 clockwise = False
 
-drive_speed = 7
+velocity = 0
+max_velocity = 15
+friction = 0.05
 rotation_speed = 4
 
 @window.event
@@ -65,14 +67,28 @@ def on_key_release(symbol, modifiers):
     clockwise = False
 
 def update(dt):
-  if forward == True:
-    car.y += drive_speed * cos(radians(car.rotation))
-    car.x += drive_speed * sin(radians(car.rotation))
-  if backward == True:
-    car.y -= drive_speed * cos(radians(car.rotation))
-    car.x -= drive_speed * sin(radians(car.rotation))
+  global velocity
+  if velocity > 0:
+    velocity -= friction
+  if velocity < 0:
+    velocity += friction
+  if velocity < friction and velocity > -friction:
+    velocity = 0
+  if velocity > max_velocity:
+    velocity = max_velocity
+  if velocity < -max_velocity:
+    velocity = -max_velocity
   
-  if forward == True or backward == True: ##should be changed to if drive_speed > 0 once acceleration is added.
+  car.y += velocity * cos(radians(car.rotation))
+  car.x += velocity * sin(radians(car.rotation))
+
+
+  if forward == True:
+    velocity += 0.1
+  if backward == True:
+    velocity -= 0.1
+  
+  if velocity != 0:
     if aclockwise == True:
       car.rotation -= rotation_speed
     if clockwise == True:
