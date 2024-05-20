@@ -49,6 +49,7 @@ def on_key_press(symbol, modifiers):
   global aclockwise
   global drift
   global rounds
+  global rotation_speed
 
   if symbol == key.UP:
     forward = True
@@ -72,6 +73,7 @@ def on_key_release(symbol, modifiers):
   global clockwise
   global aclockwise
   global drift
+  global rotation_speed
 
   if symbol == key.UP:
     forward = False
