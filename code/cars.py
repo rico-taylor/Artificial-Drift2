@@ -4,9 +4,9 @@ from pyglet.window import key
 
 from math import sin, cos, radians
 
-window = pyglet.window.Window(width=1780, height=580, caption="Images")
+window = pyglet.window.Window(width=2280, height=1580, caption="Images")
 
-logo_image = image.load("images/logo_finished.png")
+logo_image = image.load("images/track V4.png")
 car_image = image.load("images/car.png")
 
 car_image.anchor_x = car_image.width // 2
@@ -15,6 +15,7 @@ car_image.anchor_y = car_image.height // 2
 logo = sprite.Sprite(logo_image, x=1, y=1)
 car = sprite.Sprite(car_image, x=40, y=40)
 car.scale = 0.1
+logo.scale = 3
 car.rotation = 1
 
 forward = False
@@ -29,7 +30,7 @@ velocity = 0
 max_velocity = 8
 friction = 0.07
 acceleration = 0.1
-rotation_speed = 4
+rotation_speed = 3
 
 drift_time = 8
 rounds = 0
@@ -61,6 +62,7 @@ def on_key_press(symbol, modifiers):
 
   if symbol == key.LSHIFT or symbol == key.RSHIFT:
     drift = True
+    rotation_speed = 4
     rounds = 0
 
 @window.event
@@ -81,6 +83,7 @@ def on_key_release(symbol, modifiers):
     clockwise = False
   if symbol == key.LSHIFT or symbol == key.RSHIFT:
     drift = False
+    rotation_speed = 3
 
 def update(dt):
   global velocity
